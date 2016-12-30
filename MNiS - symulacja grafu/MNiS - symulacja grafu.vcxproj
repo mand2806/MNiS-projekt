@@ -133,8 +133,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OknoGlowne.cpp" />
+    <ClCompile Include="KlasaGrafu.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="KlasaGrafu.h" />
     <ClInclude Include="OknoGlowne.h">
       <FileType>CppForm</FileType>
     </ClInclude>

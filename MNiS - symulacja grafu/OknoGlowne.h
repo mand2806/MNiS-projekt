@@ -55,7 +55,7 @@ namespace MNiSsymulacjagrafu {
 			// 
 			// button1
 			// 
-			this->button1->Location = System::Drawing::Point(126, 151);
+			this->button1->Location = System::Drawing::Point(77, 198);
 			this->button1->Name = L"button1";
 			this->button1->Size = System::Drawing::Size(75, 23);
 			this->button1->TabIndex = 0;
