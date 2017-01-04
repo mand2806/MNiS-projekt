@@ -55,7 +55,7 @@ namespace MNiSsymulacjagrafu {
 			// 
 			// button1
 			// 
-			this->button1->Location = System::Drawing::Point(77, 198);
+			this->button1->Location = System::Drawing::Point(259, 364);
 			this->button1->Name = L"button1";
 			this->button1->Size = System::Drawing::Size(75, 23);
 			this->button1->TabIndex = 0;
@@ -66,7 +66,7 @@ namespace MNiSsymulacjagrafu {
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(284, 262);
+			this->ClientSize = System::Drawing::Size(592, 399);
 			this->Controls->Add(this->button1);
 			this->Name = L"OknoGlowne";
 			this->Text = L"OknoGlowne";
