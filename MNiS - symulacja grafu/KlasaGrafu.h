@@ -6,9 +6,11 @@
 #include <list>
 #include <algorithm>
 #include <iterator>
-#include <memory>
+//#include <memory>
 
 const int MAX_S = 10; // maksymalna potêga s
+class Node;
+class Edge;
 
 class PostacOperatorowa {
 	double licznik[MAX_S]; // licznik[0]: s^0, licznik[1]: s^1 itd...
@@ -31,8 +33,8 @@ public:
 class Edge 
 {
 	std::string name;
-	Node* out; // wierzcholek z ktorego wychodzi krawedz
-	Node* in; // do ktorego dochodzi
+	Node * out; // wierzcholek z ktorego wychodzi krawedz
+	Node * in; // do ktorego dochodzi
 	PostacOperatorowa transmittance; // waga krawedzi czyli transmitancja
 public:
 	Edge() : out(nullptr), in(nullptr), transmittance(PostacOperatorowa()) { }			// domyslny konstruktor - wskazniki zerowe, transmitancja zerowa
@@ -40,8 +42,8 @@ public:
 	~Edge() { } 
 	
 	PostacOperatorowa getTrans() const { return transmittance; }
-	Node* getOut() const { return out; }
-	Node* getIn() const { return in; }
+	Node * getOut() const { return out; }
+	Node * getIn() const { return in; }
 	void setTrans(PostacOperatorowa H) { transmittance = H; }
 	void setOut(Node * w) { out = w; }
 	void setIn(Node * d) { in = d; }
@@ -51,7 +53,7 @@ public:
 class Node
 {
 	std::string name;			// etykieta
-	std::list<Edge*> edgesLeaving; // lista krawedzi
+	std::list<Edge *> edgesLeaving; // lista krawedzi
 	PostacOperatorowa value; // wartosc wezla, czyli X(s), Y(s), E(s)...
 	bool visited;			// ulatwia przeszukiwanie
 public:
@@ -60,12 +62,12 @@ public:
 	~Node();
 
 	std::string getName() const { return name; }
-	std::list<Edge*> getEdges() const { return edgesLeaving; }
+	std::list<Edge *> getEdges() const { return edgesLeaving; }
 	void setVisited(bool v) { visited = v; }
 	bool getVisited() { return visited; }
 	
-	void addEdge(Edge * e) { edgesLeaving.push_back(e); } // dodaje kraw
-	void removeEdge(Edge * e);
+	void addEdge(Edge * e) { edgesLeaving.push_back(e); } // dodaje krawedz
+	void removeEdge(Edge *);
 	Edge * getEdgeTo(std::string d);
 	void removeEdgeTo(std::string l);
 
@@ -79,7 +81,16 @@ public:
 	Graph() { }        //tworzenie pustego grafu
 	~Graph() { }
 
-
+	Node * addNode(std::string label);
+	std::map<std::string, Node *> getNodes() { return nodes; }
+	Edge * addEdge(std::string from, std::string to, PostacOperatorowa w);
+	Edge * getEdge(std::string from, std::string to);
+	std::vector<Edge *> getEdges() { return edges; }
+	void removeEdge(std::string from, std::string to);
+	Node * getNodeWithName(std::string l);
+	void removeNode(std::string l);
+	std::list<Node *> whereCanIGo(Node * v);
+	bool isPath(std::string from, std::string to);
 };
 
 
