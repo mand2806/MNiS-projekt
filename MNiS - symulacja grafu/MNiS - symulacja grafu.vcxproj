@@ -134,6 +134,7 @@
   <ItemGroup>
     <ClCompile Include="OknoGlowne.cpp" />
     <ClCompile Include="KlasaGrafu.cpp" />
+    <ClCompile Include="Solver.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="KlasaGrafu.h" />

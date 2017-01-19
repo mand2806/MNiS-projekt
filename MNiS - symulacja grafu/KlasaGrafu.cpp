@@ -1,21 +1,15 @@
 #include "KlasaGrafu.h"
 
-
-
-//********************************************************************
-//*************** METODY POSTACI OPERATOROWEJ ************************
-//********************************************************************
-
 PostacOperatorowa::PostacOperatorowa()			// transmitancja zerowa (domyslna)
 {
 	for (int i = 0; i < MAX_S; i++)
 	{
-		licznik[i] = 0.0; 
+		licznik[i] = 0.0;
 		mianownik[i] = 0.0;
 	}
 }
 
-PostacOperatorowa::PostacOperatorowa(double k)			// transmitancja jedynkowa 
+PostacOperatorowa::PostacOperatorowa(double k)			// transmitancja jedynkowa
 {
 	licznik[0] = k;
 	mianownik[0] = 1.0;
@@ -27,17 +21,18 @@ PostacOperatorowa::PostacOperatorowa(double k)			// transmitancja jedynkowa
 	}
 }
 
-PostacOperatorowa::PostacOperatorowa(double * wsk_licz, double * wsk_mian)
+PostacOperatorowa::PostacOperatorowa(double * wsk_licz, double * wsk_mian, int poml, int pomm)
 {
 	for (int i = 0; i < MAX_S; ++i)				// przypisanie odpowiednich wspolczynnikow
-	{											// do licznika postaci operatorowej
-		if ((wsk_licz + i) == nullptr)
+	{
+		// do licznika postaci operatorowej
+		if (i >= poml)
 		{
 			for (; i < MAX_S; ++i)
 				licznik[i] = 0.0;
 			break;
 		}
-		else 
+		else
 		{
 			licznik[i] = *(wsk_licz + i);
 		}
@@ -45,7 +40,7 @@ PostacOperatorowa::PostacOperatorowa(double * wsk_licz, double * wsk_mian)
 
 	for (int i = 0; i < MAX_S; ++i)				// i do mianownika
 	{
-		if ((wsk_mian + i) == nullptr)
+		if (i >= pomm)
 		{
 			for (; i < MAX_S; ++i)
 				mianownik[i] = 0.0;
@@ -56,9 +51,6 @@ PostacOperatorowa::PostacOperatorowa(double * wsk_licz, double * wsk_mian)
 			mianownik[i] = *(wsk_mian + i);
 		}
 	}
-
-	delete[] wsk_licz; // usuniecie wskaznikow tymczasowych na wspolczynniki 
-	delete[] wsk_mian;
 }
 
 PostacOperatorowa::PostacOperatorowa(const PostacOperatorowa & copy)
@@ -85,8 +77,8 @@ PostacOperatorowa PostacOperatorowa::operator*(const PostacOperatorowa & H)
 				// WSTAWIC BLAD O PRZEKROCZENIU ZAKRESU
 				break;
 			}
-			temp.licznik[i+j] += this->licznik[i] * H.licznik[j];						//tabL[i + j] += this->licznik[i] * H.licznik[j];
-			temp.mianownik[i+j] += this->mianownik[i] * H.mianownik[j];					//tabM[i + j] += this->mianownik[i] * H.mianownik[j];
+			temp.licznik[i + j] += this->licznik[i] * H.licznik[j];						//tabL[i + j] += this->licznik[i] * H.licznik[j];
+			temp.mianownik[i + j] += this->mianownik[i] * H.mianownik[j];					//tabM[i + j] += this->mianownik[i] * H.mianownik[j];
 		}
 	}
 	return temp;
@@ -140,7 +132,7 @@ PostacOperatorowa & PostacOperatorowa::operator=(const PostacOperatorowa & H)
 PostacOperatorowa PostacOperatorowa::inverse(void)
 {
 	PostacOperatorowa temp;
-	
+
 	for (int i = 0; i < MAX_S; ++i)
 	{
 		temp.licznik[i] = this->mianownik[i];
@@ -149,200 +141,165 @@ PostacOperatorowa PostacOperatorowa::inverse(void)
 	return temp;
 }
 
-//****************************************************
-//*************** METODY EDGE ************************
-//****************************************************
-
-/*Edge::Edge()
+double PostacOperatorowa::Show(int s)                // funkcja do debuggowania
 {
-	wychodzacy = nullptr;
-	dochodzacy = nullptr;
-	transmitancja = PostacOperatorowa();
+		return mianownik[s];
 }
 
-Edge::Edge(Node * out, Node * in, PostacOperatorowa H)
+Edge * Vertex::getEdgeTo(string d)
 {
-	wychodzacy = out;
-	dochodzacy = in;
-	transmitancja = H;
-} */
-
-//****************************************************
-//*************** METODY NODE ************************
-//****************************************************
-
-void Node::removeEdge(Edge * e)
-{
-	edgesLeaving.erase(std::remove(edgesLeaving.begin(), edgesLeaving.end(), e), edgesLeaving.end());
-}
-
-Edge * Node::getEdgeTo(std::string d)
-{
-	for (std::list<Edge *>::iterator it = edgesLeaving.begin(); it != edgesLeaving.end(); ++it)				//(std::list<Edge *>::iterator it = edgesLeaving.begin(); it != edgesLeaving.end(); ++it) 
+	for (vector<Edge *>::iterator it = edgesLeavingMe.begin(); it != edgesLeavingMe.end(); ++it)
 	{
-		if ((*it)->getIn()->getName() == d)         //(*it)   ??
+		if ((*it)->getV2()->getLabel() == d)
 		{
-			return (*it);							// j.w.
+			return (*it);
 		}
 	}
-	return nullptr;
+	return 0;
 }
 
-void Node::removeEdgeTo(std::string l)
+Vertex *  DirectedGraph::addVertex(string label, PostacOperatorowa w)
 {
-	Edge * e = getEdgeTo(l);
-	removeEdge(e);
-}
-
-//****************************************************
-//*************** METODY GRAPH ***********************
-//****************************************************
-
-Node * Graph::addNode(std::string label) 
-{
-	Node * v = new Node(label);
-	nodes[label] = v;
+	Vertex * v = new Vertex(label, w);
+	vertices[label] = v;
 	return v;
 }
 
-Edge * Graph::addEdge(std::string from, std::string to, PostacOperatorowa w) 
+Edge * DirectedGraph::addEdge(PostacOperatorowa w, string from, string to)
 {
-	if (nodes.find(from) != nodes.end() && nodes.find(to) != nodes.end())
+
+	if (vertices.find(from) != vertices.end() && vertices.find(to) != vertices.end())
 	{
-		Node * vfrom = nodes.find(from)->second;
-		Node * vto = nodes.find(to)->second;
-		Edge * e = new Edge(vfrom, vto, w);
+		Vertex * vfrom = vertices.find(from)->second;
+		Vertex * vto = vertices.find(to)->second;
+		Edge * e = new Edge(w, vfrom, vto);
 		(*vfrom).addEdge(e);
 		edges.push_back(e);
 		return e;
 	}
 	else
 	{
-		// PRZYPADEK BRAKU WIERZCHOLKOW
-		return nullptr;
+		//przypadek gdy wierzcholki nie istnieja
+		return 0;
 	}
 }
 
-Edge * Graph::getEdge(std::string from, std::string to)
+Edge * DirectedGraph::getEdge(string from, string to)
 {
-	if (nodes.find(from) != nodes.end() && nodes.find(to) != nodes.end())
+	if (vertices.find(from) != vertices.end() && vertices.find(to) != vertices.end())
 	{
-		Node * v1 = nodes.find(from)->second;
+		Vertex * v1 = vertices.find(from)->second;
+		Vertex* v2 = vertices.find(to)->second;
 		Edge * e = (*v1).getEdgeTo(to);
 		return e;
 	}
 	else
 	{
-		// PRZYPADEK O BLEDZIE
-		return nullptr;
+		return 0;		// co gdy nie istnieje?
 	}
 }
 
-void Graph::removeEdge(std::string from, std::string to)
+bool DirectedGraph::removeEdge(string from, string to)
 {
 	Edge * e = getEdge(from, to);
-	if (e != nullptr) 
+	if (e != 0)
 	{
 		edges.erase(remove(edges.begin(), edges.end(), e), edges.end());
-		(*e).getOut()->removeEdge(e);
+		(*e).getV1()->removeEdge(e);
+		return true;
 	}
-	else 
-	{
-		// wskaznik zerowy blad - messagebox??
-	}
-}
-
-Node * Graph::getNodeWithName(std::string l)
-{
-	if (nodes.find(l) != nodes.end())
-		return nodes.find(l)->second;
 	else
-		return nullptr;
+		return false;
+		// co gdy nie istnieje?
 }
 
-void Graph::removeNode(std::string l)
+Vertex * DirectedGraph::getVertexWithLabel(string l)
 {
-	Node * v = getNodeWithName(l);
-	if (v != nullptr) 
+	if (vertices.find(l) != vertices.end())
+		return vertices.find(l)->second;
+	else
+		return 0;		// nie istnieje?
+}
+
+bool DirectedGraph::removeVertex(string l)
+{
+	Vertex * v = getVertexWithLabel(l);
+	if (v != 0)
 	{
-		std::list<Edge *> edges = getNodeWithName(l)->getEdges();
-		for (auto it : edges) //(std::list<Edge *>::iterator it = edges.begin(); it != edges.end(); ++it)
+		vector<Edge *> edges = getVertexWithLabel(l)->getEdges();
+
+		for (vector<Edge *>::iterator it = edges.begin(); it != edges.end(); ++it)
 		{
-			std::string from = it->getOut()->getName(); // (*it)
-			std::string to = it->getIn()->getName();
+			string from = (*it)->getV1()->getLabel();
+			string to = (*it)->getV2()->getLabel();
 			removeEdge(from, to);
 		}
-		nodes.erase(l);
+		vertices.erase(l);
+		return true;
 	}
-	else {
-		// BLAD W PRZYPADKU WSKAZNIKA ZEROWEGO
+	else
+	{
+		return false;
+		//wierzcholek nie istnieje
 	}
 }
 
-std::list<Node*> Graph::whereCanIGo(Node * v)
+vector<Vertex *> DirectedGraph::whereCanIGo(Vertex * v)
 {
-	std::list<Node *> destinations;
-	std::list<Edge *> edges = v->getEdges();
-	for (auto it : edges) 
+	vector<Vertex *> destinations;
+	vector<Edge *> edges = v->getEdges();
+	for (vector<Edge *>::const_iterator it = edges.begin(); it != edges.end(); ++it)
 	{
-		if ((it)->getIn() != v) {
-			destinations.push_back((it)->getOut());
+		if ((*it)->getV2() != v)
+		{
+			destinations.push_back((*it)->getV2());
 		}
 	}
 	destinations.push_back(v);
 	return destinations;
 }
 
-bool Graph::isPath(std::string from, std::string to)
+bool DirectedGraph::isPath(string from, string to)
 {
-	Node * vfrom = getNodeWithName(from);
-	Node * vto = getNodeWithName(to);
+	Vertex * vfrom = getVertexWithLabel(from);
+	Vertex * vto = getVertexWithLabel(to);
 
-	if (vfrom == nullptr || vto == nullptr) 
+	if (vfrom == 0 || vto == 0)
 	{
 		return false;
 	}
 
-	if (from == to) 
+	for (vector<Edge *>::const_iterator it = edges.begin(); it != edges.end(); ++it)
 	{
-		//Ten sam wierzcholek
-		return true;
+		if (vfrom == (*it)->getV1() && vto == (*it)->getV2())
+			return true;
 	}
-	
-	std::map<std::string, Node *> vertices = getNodes();
-	std::vector<Edge *> krawedzie = getEdges();
-	std::vector<Node *> verticesToCheck;
+
+	map<string, Vertex*> vertices = getVertices();
+	vector<Edge *> edges = getEdges();
+
+	vector<Vertex *> verticesToCheck;
 	verticesToCheck.push_back(vfrom);
 	vertices.erase(from);
 
-	while (verticesToCheck.size() != 0) 
+	while (verticesToCheck.size() != 0)
 	{
-		std::list<Node *> destinations = whereCanIGo(verticesToCheck[0]);
+		vector<Vertex *> destinations = whereCanIGo(verticesToCheck[0]);
 		verticesToCheck.erase(verticesToCheck.begin());
-		for (auto it : destinations) 
+
+
+		for (vector<Vertex *>::const_iterator it = destinations.begin(); it != destinations.end(); ++it)
 		{
-			if (vertices.find((it)->getName()) != vertices.end()) 
+			if (vertices.find((*it)->getLabel()) != vertices.end())
 			{
-				if ((it)->getName() == to) 
+				if ((*it)->getLabel() == to)
 				{
 					return true;
 				}
-				verticesToCheck.push_back((it));
-				vertices.erase((it)->getName());
+				verticesToCheck.push_back((*it));
+				vertices.erase((*it)->getLabel());
 			}
 		}
 	}
 	return false;
 }
-
-//****************************************************
-//************ FUNKCJE POMOCNICZE DO GRAFU ***********
-//****************************************************
-
-
-
-
-
-
-
-

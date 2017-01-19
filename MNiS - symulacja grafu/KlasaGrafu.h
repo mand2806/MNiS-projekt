@@ -3,95 +3,94 @@
 #include <vector>
 #include <map>
 #include <string>
-#include <list>
 #include <algorithm>
-#include <iterator>
-//#include <memory>
+
+using std::vector;
+using std::map;
+using std::string;
 
 const int MAX_S = 10; // maksymalna potêga s
-class Node;
-class Edge;
 
-class PostacOperatorowa {
+class PostacOperatorowa
+{
 	double licznik[MAX_S]; // licznik[0]: s^0, licznik[1]: s^1 itd...
 	double mianownik[MAX_S]; // j.w.
 public:
 	PostacOperatorowa();
 	PostacOperatorowa(double k);
-	PostacOperatorowa(double * wsk_licz, double * wsk_mian);
+	PostacOperatorowa(double * wsk_licz, double * wsk_mian, int poml, int pomm);
 	PostacOperatorowa(const PostacOperatorowa & copy);
 	~PostacOperatorowa() { }
-	
+
 	PostacOperatorowa operator*(const PostacOperatorowa & H); // polaczenie szeregowe transmitancji
 	PostacOperatorowa operator*(double k);					  // wzmocnienie
 	PostacOperatorowa operator+(const PostacOperatorowa & H); // polaczenie rownolegle
 	PostacOperatorowa operator-(const PostacOperatorowa & H);
 	PostacOperatorowa & operator=(const PostacOperatorowa & H);
 	PostacOperatorowa inverse(void);							// czyli G^-1
+	double Show(int s); // do debuggowania
 };
 
-class Edge 
-{
-	std::string name;
-	Node * out; // wierzcholek z ktorego wychodzi krawedz
-	Node * in; // do ktorego dochodzi
-	PostacOperatorowa transmittance; // waga krawedzi czyli transmitancja
-public:
-	Edge() : out(nullptr), in(nullptr), transmittance(PostacOperatorowa()) { }			// domyslny konstruktor - wskazniki zerowe, transmitancja zerowa
-	Edge(Node * w, Node * d, PostacOperatorowa H) : out(w), in(d), transmittance(H) { }
-	~Edge() { } 
-	
-	PostacOperatorowa getTrans() const { return transmittance; }
-	Node * getOut() const { return out; }
-	Node * getIn() const { return in; }
-	void setTrans(PostacOperatorowa H) { transmittance = H; }
-	void setOut(Node * w) { out = w; }
-	void setIn(Node * d) { in = d; }
+class Edge;
+class Vertex;
 
+class Edge
+{
+	PostacOperatorowa weight;    //waga
+	Vertex * vertex1;           // wezel z ktorego wychodzi krawedz
+	Vertex * vertex2;           //wezel do ktorego dochodzi krawedz
+public:
+	PostacOperatorowa getWeight() const { return weight; }
+	Vertex* getV1() const { return vertex1; }
+	Vertex* getV2() const { return vertex2; }
+	void setWeight(PostacOperatorowa w) { weight = w; }
+	void setV1(Vertex * v) { vertex1 = v; }
+	void setV2(Vertex * v) { vertex2 = v; }
+	Edge(PostacOperatorowa w, Vertex* v1, Vertex* v2)
+	{
+		weight = w;
+		vertex1 = v1;
+		vertex2 = v2;
+	}
 };
 
-class Node
+class Vertex
 {
-	std::string name;			// etykieta
-	std::list<Edge *> edgesLeaving; // lista krawedzi
-	PostacOperatorowa value; // wartosc wezla, czyli X(s), Y(s), E(s)...
-	bool visited;			// ulatwia przeszukiwanie
+	string label;                       // nazwa wierzcholka
+	vector<Edge *> edgesLeavingMe;  // krawedzie wychodzace
+	bool visited;                   // zmienna pomocnicza do znajdywania drogi
+	PostacOperatorowa weight;       // waga
 public:
-	Node();
-	Node(std::string n) : name(n), visited(false) { }
-	~Node();
-
-	std::string getName() const { return name; }
-	std::list<Edge *> getEdges() const { return edgesLeaving; }
+	string getLabel() const { return label; }
+	vector<Edge*> getEdges()const { return edgesLeavingMe; }
+	Edge * getEdgeTo(string d);
+	PostacOperatorowa getWeight() { return weight; }
 	void setVisited(bool v) { visited = v; }
 	bool getVisited() { return visited; }
-	
-	void addEdge(Edge * e) { edgesLeaving.push_back(e); } // dodaje krawedz
-	void removeEdge(Edge *);
-	Edge * getEdgeTo(std::string d);
-	void removeEdgeTo(std::string l);
-
+	void addEdge(Edge * e) { edgesLeavingMe.push_back(e); }
+	void removeEdge(Edge * e) { edgesLeavingMe.erase(remove(edgesLeavingMe.begin(), edgesLeavingMe.end(), e), edgesLeavingMe.end()); }
+	void removeEdgeTo(string l)
+	{
+		Edge * e = getEdgeTo(l);
+		removeEdge(e);
+	}
+	Vertex(string l, PostacOperatorowa w) : label(l), visited(false), weight(w) { }
 };
 
-class Graph
+class DirectedGraph
 {
-	std::vector<Edge *> edges; // wektor krawedzi
-	std::map<std::string, Node *> nodes; // wektor wezlow
+	vector<Edge*> edges;
+	map<string, Vertex*> vertices;
 public:
-	Graph() { }        //tworzenie pustego grafu
-	~Graph() { }
-
-	Node * addNode(std::string label);
-	std::map<std::string, Node *> getNodes() { return nodes; }
-	Edge * addEdge(std::string from, std::string to, PostacOperatorowa w);
-	Edge * getEdge(std::string from, std::string to);
-	std::vector<Edge *> getEdges() { return edges; }
-	void removeEdge(std::string from, std::string to);
-	Node * getNodeWithName(std::string l);
-	void removeNode(std::string l);
-	std::list<Node *> whereCanIGo(Node * v);
-	bool isPath(std::string from, std::string to);
+	Vertex *  addVertex(string label, PostacOperatorowa w);
+	map<string, Vertex*> getVertices() { return vertices; }
+	vector<Edge*> getEdges() { return edges; }
+	Edge * addEdge(PostacOperatorowa w, string from, string to);
+	Edge * getEdge(string from, string to);
+	bool removeEdge(string from, string to);
+	Vertex * getVertexWithLabel(string l);
+	bool removeVertex(string l);
+	vector<Vertex *> whereCanIGo(Vertex * v);
+	bool isPath(string from, string to);
+	void printGraph(void);
 };
-
-
-
