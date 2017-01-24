@@ -1,14 +1,14 @@
 # MNiS-projekt
                                                 ******* SYMULACJA GRAFU *******
-Opis: Program w założeniu ma umożliwić redukcje grafu przepływu sygnału oraz wyznaczenie odpowiedzi skokowej, impulsowej i sinus.
-Autorzy: Mateusz Andrzejewski, Marek Radkowski, Mateusz Zalas.
-
-Użyte biblioteki: 
-<vector> <map> <string> <algorithm> <msclr\marshal_cppstd.h> <cmath> <fstream>
-
-const int MAX_S = 10 // stała przechowująca maksymalny rozmiar tablic licznika i mianownika w klasie PostacOperatorowa 
-
-Klasa PostacOperatorowa:
+Opis: Program w założeniu ma umożliwić redukcje grafu przepływu sygnału oraz wyznaczenie odpowiedzi skokowej, impulsowej i sinus.\n
+Autorzy: Mateusz Andrzejewski, Marek Radkowski, Mateusz Zalas.\n
+\n
+Użyte biblioteki: \n
+<vector> <map> <string> <algorithm> <msclr\marshal_cppstd.h> <cmath> <fstream>\n
+\n
+const int MAX_S = 10 // stała przechowująca maksymalny rozmiar tablic licznika i mianownika w klasie PostacOperatorowa \n
+\n
+Klasa PostacOperatorowa:\n
 Cechy:
 reprezentacja poprzez 2 tablice typu zmiennoprzecinkowego. Tablica licznik zawiera współczynniki kolejnych potęg s np.
 licznik[0]=1 oznacza 1*s^0, licznik[2] = 2,43 oznacza 2,43*s^2 itd. Tablica mianownik analogicznie.
