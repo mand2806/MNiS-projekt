@@ -5,7 +5,7 @@ Opis: Program w założeniu ma umożliwić redukcje grafu przepływu sygnału or
 Autorzy: Mateusz Andrzejewski, Marek Radkowski, Mateusz Zalas.
 
 Użyte biblioteki: 
-"<vector> <map> <string> <algorithm> <msclr\marshal_cppstd.h> <cmath> <fstream>"
+"vector, map, string, algorithm, msclr\marshal_cppstd.h, cmath, fstream"
 
 const int MAX_S = 10 // stała przechowująca maksymalny rozmiar tablic licznika i mianownika w klasie PostacOperatorowa 
 
