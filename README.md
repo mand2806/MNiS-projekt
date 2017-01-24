@@ -9,6 +9,7 @@ Użyte biblioteki:
 const int MAX_S = 10 // stała przechowująca maksymalny rozmiar tablic licznika i mianownika w klasie PostacOperatorowa 
 
 Klasa PostacOperatorowa:
+
 Cechy:
 reprezentacja poprzez 2 tablice typu zmiennoprzecinkowego. Tablica licznik zawiera współczynniki kolejnych potęg s np.
 licznik[0]=1 oznacza 1*s^0, licznik[2] = 2,43 oznacza 2,43*s^2 itd. Tablica mianownik analogicznie.
