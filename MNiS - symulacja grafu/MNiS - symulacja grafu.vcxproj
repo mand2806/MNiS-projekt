@@ -133,11 +133,19 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OknoGlowne.cpp" />
+    <ClCompile Include="KlasaGrafu.cpp" />
+    <ClCompile Include="Solver.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="KlasaGrafu.h" />
     <ClInclude Include="OknoGlowne.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="OknoGlowne.resx">
+      <DependentUpon>OknoGlowne.h</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
