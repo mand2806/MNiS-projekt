@@ -41,4 +41,29 @@ removeVertex - usuwa węzeł o podanej nazwie.
 whereCanIGo - zwraca vector węzłów do których można przejść w następnym kroku (od podanego wierzchołka).
 isPath - sprawdza czy istnieje droga pomiędzy wierzchołkami o nazwach podanych w argumentach (obsługuje pętle własne).
 
+Funkcja solver: 
 
+Dane wejściowe:
+*licznik - wektor zawierający współczynniki rzeczywiste licznika transmitancji, współczynniki w kolejności od stojącego przy najwyższej potędze do wyrazu wolnego przykład: [2 3 4]  odpowiada licznikowi 2s^2+3s+4 
+*mianownik - wektor zawierający współczynniki rzeczywiste mianiwnika transmitancji, współczynniki w kolejności od stojącego przy najwyższej potędze do wyrazu wolnego przykład: [5 6]  odpowiada 5s+6 
+*typ_wymuszenia - liczba całkowita określająca badany typ odpowiedzi:
+1 - odpowiedź skokowa
+2 - odpowiedź impulsowa
+3 - odpowiedź na fukncję sinus postacji Asin(wt+fi), wymaga podania amplitudy, pulsacji, fazy początkowej wymuszenia domyśnie wszystkie wartości są równe 0
+*czas_symulacji - liczba całkowita określająca długość symulacji w [s]
+ skok - liczba rzeczywista - różnica między kolejnymi wartościami czasu, w większości przypadków wartość 0.001(wyznaczona doświadczalnie) daje wystarczająco dobrą dokłądność  
+*liczby rzeczywiste:(tylko w przypadku wymuszenia sinusoidalnego)
+amplituda - A
+pulsacja - w
+faza_poczatkowa - fi
+
+Wyjście:
+Program tworzy plik wyniki.txt w którym znajdują się dwie kolumny:
+w pierwszej jest czas w [s] od 0 zwiększający się o skok do czas_symulacji
+w drugiej znajduję się obliczona odpowiedź na zadane wymuszenie
+
+Opis algorytmu:
+Do obliczeń została użyta metoda eulera wstecz.
+
+Uwagi:
+Transmitancja definiowana jest przy założeniu zerowych warunków początkowych.
